@@ -21,13 +21,18 @@ def fetch_data():
     try:
         ref = db.reference('/sensorData/5000')
         data = ref.get()
-        df = pd.DataFrame(data).transpose()
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        df = df.sort_values(by='timestamp')
-        return df
+        if data:
+            df = pd.DataFrame(data).transpose()
+            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            df = df.sort_values(by='timestamp')
+            return df
+        else:
+            st.error("No data found at the specified reference.")
+            return pd.DataFrame()  # Return empty DataFrame if no data is found
     except Exception as e:
         st.error(f"Error fetching data: {e}")
         return pd.DataFrame()  # Return an empty DataFrame in case of error
+
 
 # Fungsi untuk mengunduh data sebagai CSV
 def download_data(df):
