@@ -1,38 +1,21 @@
 import streamlit as st
 import pandas as pd
-import firebase_admin
-from firebase_admin import credentials, db
+import requests
 import plotly.express as px
 import plotly.graph_objects as go
-
-# Inisialisasi Firebase Admin SDK
-def initialize_firebase():
-    if not firebase_admin._apps:
-        cred = credentials.Certificate("SleepQuality-Monitoring/sleep-quality-7cba3-firebase-adminsdk-p87zb-481fb32683.json")
-        firebase_admin.initialize_app(cred, {
-            'databaseURL': 'https://sleep-quality-7cba3-default-rtdb.asia-southeast1.firebasedatabase.app/'
-        })
-
-initialize_firebase()
 
 # Fungsi untuk mengambil data dari Firebase
 @st.cache_data(ttl=3600)
 def fetch_data():
-    try:
-        ref = db.reference('/sensorData/5000')
-        data = ref.get()
-        if data:
-            df = pd.DataFrame(data).transpose()
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
-            df = df.sort_values(by='timestamp')
-            return df
-        else:
-            st.error("No data found at the specified reference.")
-            return pd.DataFrame()  # Return empty DataFrame if no data is found
-    except Exception as e:
-        st.error(f"Error fetching data: {e}")
-        return pd.DataFrame()  # Return an empty DataFrame in case of error
+    url = "https://sleep-quality-7cba3-default-rtdb.asia-southeast1.firebasedatabase.app/sensorData/5000.json"
+    response = requests.get(url)
+    data = response.json()
 
+    # Mengonversi data ke DataFrame
+    df = pd.DataFrame(data).transpose()
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    df = df.sort_values(by='timestamp')
+    return df
 
 # Fungsi untuk mengunduh data sebagai CSV
 def download_data(df):
