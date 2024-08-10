@@ -18,14 +18,16 @@ initialize_firebase()
 # Fungsi untuk mengambil data dari Firebase
 @st.cache_data(ttl=3600)
 def fetch_data():
-    ref = db.reference('/sensorData/5000')
-    data = ref.get()
-
-    # Mengonversi data ke DataFrame
-    df = pd.DataFrame(data).transpose()
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    df = df.sort_values(by='timestamp')
-    return df
+    try:
+        ref = db.reference('/sensorData/5000')
+        data = ref.get()
+        df = pd.DataFrame(data).transpose()
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df = df.sort_values(by='timestamp')
+        return df
+    except Exception as e:
+        st.error(f"Error fetching data: {e}")
+        return pd.DataFrame()  # Return an empty DataFrame in case of error
 
 # Fungsi untuk mengunduh data sebagai CSV
 def download_data(df):
