@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 # Inisialisasi Firebase Admin SDK
 def initialize_firebase():
     if not firebase_admin._apps:
-        cred = credentials.Certificate("C:/Users/user/OneDrive/Documents/sleep-quality-7cba3-firebase-adminsdk-p87zb-481fb32683.json")
+        cred = credentials.Certificate("sleep-quality-7cba3-firebase-adminsdk-p87zb-481fb32683.json")
         firebase_admin.initialize_app(cred, {
             'databaseURL': 'https://sleep-quality-7cba3-default-rtdb.asia-southeast1.firebasedatabase.app/'
         })
